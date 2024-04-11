@@ -18,7 +18,8 @@
                 const userData = await response.json();
 
                 if (userData && userData.created) {
-                    const joinDate = new Date(userData.created);
+                    const joinDateISO = userData.created; // e.g., "2022-03-15T12:30:45.000Z"
+                    const joinDate = new Date(joinDateISO);
                     const formattedJoinDate = joinDate.toDateString();
                     alert(`User with ID ${userId} joined Roblox on: ${formattedJoinDate}`);
                 } else {
