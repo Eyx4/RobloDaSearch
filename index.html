@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Roblox Players by Birthdate</title>
+    <script>
+        // Function to fetch Roblox players born on a specific date
+        async function findPlayersByBirthdate() {
+            const birthdateInput = document.getElementById('birthdate').value;
+            
+            // Validate date format (Assuming YYYY-MM-DD)
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(birthdateInput)) {
+                alert('Please enter a valid date in YYYY-MM-DD format.');
+                return;
+            }
+
+            const apiUrl = `https://api.roblox.com/users/get-by-birthdate?birthdate=${birthdateInput}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.success && data.data.length > 0) {
+                    const playersList = data.data.map(player => `${player.Username} (ID: ${player.Id})`).join('\n');
+                    alert(`Roblox Players born on ${birthdateInput}:\n\n${playersList}`);
+                } else {
+                    alert('No Roblox players found for this birthdate.');
+                }
+            } catch (error) {
+                alert('Error occurred while fetching player data.');
+                console.error(error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Find Roblox Players by Birthdate</h1>
+    <p>Enter a birthdate (YYYY-MM-DD) to find Roblox players born on that date:</p>
+    <input type="text" id="birthdate" placeholder="YYYY-MM-DD" style="width: 200px;">
+    <button onclick="findPlayersByBirthdate()">Find Players</button>
+</body>
+</html>
