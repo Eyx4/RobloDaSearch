@@ -10,9 +10,14 @@
 
             try {
                 const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
                 const userData = await response.json();
 
-                if (response.ok && userData.created) {
+                if (userData && userData.created) {
                     const joinDate = new Date(userData.created);
                     const formattedJoinDate = joinDate.toDateString();
                     alert(`User with ID ${userId} joined Roblox on: ${formattedJoinDate}`);
