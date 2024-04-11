@@ -3,41 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Roblox Players by Birthdate</title>
+    <title>Get Roblox User Join Date</title>
     <script>
-        // Function to fetch Roblox players born on a specific date
-        async function findPlayersByBirthdate() {
-            const birthdateInput = document.getElementById('birthdate').value;
-            
-            // Validate date format (Assuming YYYY-MM-DD)
-            if (!/^\d{4}-\d{2}-\d{2}$/.test(birthdateInput)) {
-                alert('Please enter a valid date in YYYY-MM-DD format.');
+        async function getUserJoinDate(userId) {
+            const apiUrl = `https://users.roblox.com/v1/users/${userId}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                const userData = await response.json();
+
+                if (response.ok && userData.created) {
+                    const joinDate = new Date(userData.created);
+                    const formattedJoinDate = joinDate.toDateString();
+                    alert(`User with ID ${userId} joined Roblox on: ${formattedJoinDate}`);
+                } else {
+                    alert(`User with ID ${userId} not found or join date not available.`);
+                }
+            } catch (error) {
+                console.error('Error occurred while fetching user data:', error);
+                alert('Error occurred while fetching user data. Please try again.');
+            }
+        }
+
+        function handleGetJoinDate() {
+            const userId = document.getElementById('userIdInput').value.trim();
+
+            if (userId === '') {
+                alert('Please enter a valid Roblox user ID.');
                 return;
             }
 
-            const apiUrl = `https://api.roblox.com/users/get-by-birthdate?birthdate=${birthdateInput}`;
-            
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-
-                if (data.success && data.data.length > 0) {
-                    const playersList = data.data.map(player => `${player.Username} (ID: ${player.Id})`).join('\n');
-                    alert(`Roblox Players born on ${birthdateInput}:\n\n${playersList}`);
-                } else {
-                    alert('No Roblox players found for this birthdate.');
-                }
-            } catch (error) {
-                alert('Error occurred while fetching player data.');
-                console.error(error);
-            }
+            getUserJoinDate(userId);
         }
     </script>
 </head>
 <body>
-    <h1>Find Roblox Players by Birthdate</h1>
-    <p>Enter a birthdate (YYYY-MM-DD) to find Roblox players born on that date:</p>
-    <input type="text" id="birthdate" placeholder="YYYY-MM-DD" style="width: 200px;">
-    <button onclick="findPlayersByBirthdate()">Find Players</button>
+    <h1>Get Roblox User Join Date</h1>
+    <p>Enter Roblox User ID:</p>
+    <input type="text" id="userIdInput" placeholder="User ID" style="width: 200px;">
+    <button onclick="handleGetJoinDate()">Get Join Date</button>
 </body>
 </html>
